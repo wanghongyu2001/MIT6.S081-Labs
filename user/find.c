@@ -42,7 +42,7 @@ void find(char* path, const char* file)
 
     switch (st.type) {
     case T_FILE:
-        printf("a file: %s, file_name: %s, fmt:%s, strcmp = %d\n", path, file, fmtname(path), strcmp(fmtname(path), file));
+        // printf("a file: %s, file_name: %s, fmt:%s, strcmp = %d\n", path, file, fmtname(path), strcmp(fmtname(path), file));
         if (strcmp(file, fmtname(path)) == 0) printf("%s\n", path);
         break;
 
