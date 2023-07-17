@@ -9,19 +9,22 @@
 #define MAXLEN 32
 char* arg[MAXARG];
 int count, len;
+char args[MAXARG][MAXLEN];
 
 int main(int argc, char** argv)
 {
     for (int i = 1; i < argc; i++)
     {
+        // argv[0] = xargs, argv[1] = cmd , 因为exec(cmd, arg) 中 arg[0] == cmd
         arg[i - 1] = argv[i];
     }
     char buf;
     // char* cmd = argv[0];
-    char args[MAXARG][MAXLEN];
+    // 从stdin中读入数据 管道前面的命令输出在stdin当中，
     while (read(stdin, &buf, 1) > 0)
     {
         // printf("%c", buf);
+        //测试当中 find . b 输出是以\n分割的， echo的输出是' '分割
         if (buf == '\n' || buf == ' ')
         {
             arg[count + argc - 1] = args[count];
@@ -29,8 +32,6 @@ int main(int argc, char** argv)
             count++;
 
         }
-        // args[0][len] = buf;
-        // len++;
         else if (buf != ' ')
         {
             args[count][len] = buf;
@@ -40,7 +41,7 @@ int main(int argc, char** argv)
     if (fork() == 0)
     {
         exec(argv[1], arg);
-        // exit(0);
+        // exec命令执行后会自动exit(0);
     }
     else
     {
