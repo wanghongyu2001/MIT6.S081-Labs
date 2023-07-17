@@ -21,8 +21,8 @@ int main(int argc, char* argv[])
         close(p1[WRITE]);
         close(p2[READ]);
         read(p1[READ], buf, 1);
-        write(p2[WRITE], " ", 1);
         printf("%d: received ping\n", getpid());
+        write(p2[WRITE], " ", 1);
         close(p1[READ]);
         close(p2[WRITE]);
         exit(0);
