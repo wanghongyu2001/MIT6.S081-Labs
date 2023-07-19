@@ -6,6 +6,39 @@
 #include "memlayout.h"
 #include "spinlock.h"
 #include "proc.h"
+#include "sysinfo.h"
+extern uint64 getFreeMem(void);
+extern uint64 getProcNum(void);
+
+uint64 sys_trace(void)
+{
+  int n;
+  if (argint(0, &n) < 0)
+    return -1;
+  
+
+  struct proc* p = myproc();
+  p->mask = n;
+  return 0;
+}
+
+uint64 sys_sysinfo(void)
+{
+  uint64 addr;
+
+  // printf("sysinfor say hi\n");
+  if (argaddr(0, &addr) < 0)
+    return -1;
+  
+  struct sysinfo s;
+  s.freemem = getFreeMem();   // amount of free memory (bytes)
+  s.nproc = getProcNum();     // number of process
+  struct proc* p = myproc();
+  
+  if (copyout(p->pagetable, addr, (char*)&s, sizeof(struct sysinfo)) < 0)
+    return -1;
+  return 0;
+}
 
 uint64
 sys_exit(void)
