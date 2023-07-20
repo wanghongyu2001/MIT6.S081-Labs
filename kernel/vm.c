@@ -82,18 +82,21 @@ walk(pagetable_t pagetable, uint64 va, int alloc)
 {
   if(va >= MAXVA)
     panic("walk");
-
+  // 三级页表，我们先读取前两级页表。
   for(int level = 2; level > 0; level--) {
     pte_t *pte = &pagetable[PX(level, va)];
     if(*pte & PTE_V) {
       pagetable = (pagetable_t)PTE2PA(*pte);
-    } else {
+    }
+    else {
+      // 如果有freeMem 则可以分配空间，
       if(!alloc || (pagetable = (pde_t*)kalloc()) == 0)
         return 0;
       memset(pagetable, 0, PGSIZE);
       *pte = PA2PTE(pagetable) | PTE_V;
     }
   }
+  //获取level 0 的pte，注意返回是pte_t*，所以返回pte的地址
   return &pagetable[PX(0, va)];
 }
 
@@ -105,7 +108,7 @@ walkaddr(pagetable_t pagetable, uint64 va)
 {
   pte_t *pte;
   uint64 pa;
-
+// 虚拟地址空间最大2^39 bytes 512GB 
   if(va >= MAXVA)
     return 0;
 
@@ -274,7 +277,8 @@ freewalk(pagetable_t pagetable)
       uint64 child = PTE2PA(pte);
       freewalk((pagetable_t)child);
       pagetable[i] = 0;
-    } else if(pte & PTE_V){
+    }
+    else if (pte & PTE_V) {
       panic("freewalk: leaf");
     }
   }

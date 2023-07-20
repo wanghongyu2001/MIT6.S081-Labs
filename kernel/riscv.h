@@ -333,7 +333,7 @@ sfence_vma()
 
 
 #define PGSIZE 4096 // bytes per page
-#define PGSHIFT 12  // bits of offset within a page
+#define PGSHIFT 12  // bits of offset within a page. a page cantains 2 ^ 12 bytes
 
 #define PGROUNDUP(sz)  (((sz)+PGSIZE-1) & ~(PGSIZE-1))
 #define PGROUNDDOWN(a) (((a)) & ~(PGSIZE-1))
@@ -346,7 +346,7 @@ sfence_vma()
 
 // shift a physical address to the right place for a PTE.
 #define PA2PTE(pa) ((((uint64)pa) >> 12) << 10)
-
+// 44 + 10 = 54 bits address 54 - 10 + 12 = 56 = 44(PPN) + 12(offset) is the page table address. 
 #define PTE2PA(pte) (((pte) >> 10) << 12)
 
 #define PTE_FLAGS(pte) ((pte) & 0x3FF)
